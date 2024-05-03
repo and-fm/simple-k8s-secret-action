@@ -1,0 +1,14 @@
+name: "Simple k8s Secret Action"
+branding:
+  icon: "lock"
+  color: "blue"
+description: "Generates a valid k8s secret yaml from a list of secrets"
+inputs:
+  secrets:
+    description: list of secrets
+    required: true
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.secrets }}
