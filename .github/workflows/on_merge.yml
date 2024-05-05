@@ -1,3 +1,5 @@
+name: Automatically tag and release on merge
+
 on:
   pull_request:
     types:
