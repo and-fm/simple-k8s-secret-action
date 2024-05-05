@@ -1,26 +1,25 @@
 name: Build and scan container for vulnerabilities
 on:
   pull_request:
-  
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: cloudflared-ssh-action
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   dependency-review:
-    name: 'Dependency Review'
+    name: "Dependency Review"
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
-    - name: 'Checkout code'
-      uses: actions/checkout@v4
-    - name: Dependency Review
-      uses: actions/dependency-review-action@v4
-      with:
-        fail-on-severity: high
-        
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+
   build-and-push-image:
     name: Build and push to GitHub Packages
     needs: dependency-review
@@ -28,18 +27,18 @@ jobs:
     permissions:
       contents: read
       packages: write
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Login to GitHub Packages
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -57,17 +56,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Run scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }}'
-          exit-code: '1'
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          image-ref: "${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }}"
+          exit-code: "1"
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
           limit-severities-for-sarif: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          format: "sarif"
+          output: "trivy-results.sarif"
         env:
           TRIVY_USERNAME: ${{ github.repository_owner }}
           TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
@@ -76,7 +75,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
   clean-ghcr:
     name: Delete old container images
@@ -87,8 +86,8 @@ jobs:
     steps:
       - name: Delete images
         uses: actions/delete-package-versions@v5
-        with: 
+        with:
           package-name: ${{ env.IMAGE_NAME }}
-          package-type: 'container'
+          package-type: "container"
           min-versions-to-keep: 5
           delete-only-pre-release-versions: "true"
