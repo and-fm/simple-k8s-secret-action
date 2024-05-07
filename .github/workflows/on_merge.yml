@@ -29,8 +29,9 @@ jobs:
         if: steps.new_version_check.outputs.changed == 'true'
         id: gen-tag
         run: |
-          echo tag=$(cat CHANGELOG.md | grep -E -m 1 '^##\s(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$' | cut -c 4- | sed "s/^/v/") >> $GITHUB_OUTPUT
-          echo short_tag=$(echo $tag | sed "s/\..*//g") >> $GITHUB_OUTPUT
+          cat CHANGELOG.md | grep -E -m 1 '^##\s(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$' | cut -c 4- | sed "s/^/v/" >> tag.txt
+          echo tag=$(cat tag.txt) >> $GITHUB_OUTPUT
+          echo short_tag=$(cat tag.txt | sed "s/\..*//g") >> $GITHUB_OUTPUT
       - name: Get latest changelog change
         if: steps.new_version_check.outputs.changed == 'true'
         id: changelog-latest
@@ -57,7 +58,7 @@ jobs:
               sha: context.sha
             })
       - name: Push major version tag to repo
-        if: steps.gen-tag.outcome == 'success'
+        if: ${{ (steps.gen-tag.outcome == 'success') && (steps.gen-tag.outputs.short_tag != 'v0') }}
         uses: actions/github-script@v5
         with:
           script: |
