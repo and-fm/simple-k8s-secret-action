@@ -1,3 +1,7 @@
+## 0.1.6
+
+- fix the short tagging
+
 ## 0.1.5
 
 - fourth time's the one i swear
