@@ -24,7 +24,7 @@ jobs:
       - name: Check if there are any changelog updates
         id: new_version_check
         run: |
-          git diff --quiet CHANGELOG.md || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet HEAD~1 HEAD CHANGELOG.md || echo "changed=true" >> $GITHUB_OUTPUT
       - name: Generate a tag from the latest CHANGELOG.md version
         if: steps.new_version_check.outputs.changed == 'true'
         id: gen-tag
@@ -57,6 +57,7 @@ jobs:
               sha: context.sha
             })
       - name: Push major version tag to repo
+        if: steps.gen-tag.outcome == 'success'
         uses: actions/github-script@v5
         with:
           script: |
