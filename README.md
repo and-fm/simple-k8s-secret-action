@@ -41,7 +41,7 @@ jobs:
       - name: Generate secret via kubectl
         uses: and-fm/simple-k8s-secret-action@v0.1.0
         with:
-          secrets:
-            SECRET_1: ${{ secrets.SECRET_1 }}
-            SECRET_2: ${{ secrets.SECRET_2 }}
+          secrets: |-
+            SECRET_1:${{ secrets.SECRET_1 }}
+            SECRET_2:${{ secrets.SECRET_2 }}
 ```
