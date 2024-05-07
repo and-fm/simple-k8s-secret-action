@@ -36,7 +36,7 @@ jobs:
         if: steps.new_version_check.outputs.changed == 'true'
         id: changelog-latest
         run: |
-          echo change=$(cat CHANGELOG.md | awk -v n=1 '/##.*/{l++} l>n{exit} l==n') >> $GITHUB_OUTPUT
+          cat CHANGELOG.md | awk -v n=1 '/##.*/{l++} l>n{exit} l==n' >> change.txt
       - name: Check for major version tag
         id: tag-check
         run: |
@@ -82,7 +82,7 @@ jobs:
         if: ${{ (steps.gen-tag.outputs.tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
         with:
           tag_name: ${{steps.gen-tag.outputs.tag}}
-          body: ${{steps.changelog-latest.outputs.change}}
+          body_path: change.txt
           make_latest: true
       - name: Login to GitHub Packages
         if: steps.release.outcome == 'success'
