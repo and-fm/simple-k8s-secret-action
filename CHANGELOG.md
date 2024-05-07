@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Improve auto tagging by filtering the release changelog
+
 ## 0.1.1
 
 - Fix merge yaml
