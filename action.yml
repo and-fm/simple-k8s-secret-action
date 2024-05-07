@@ -7,6 +7,9 @@ inputs:
   secrets_name:
     description: Resource name
     required: true
+  secrets_namespace:
+    description: Namespace to put the secrets in
+    required: true
   secrets:
     description: list of secrets
     required: true
