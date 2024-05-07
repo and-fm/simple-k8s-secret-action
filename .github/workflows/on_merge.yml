@@ -20,11 +20,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
       - name: Check if there are any changelog updates
         id: new_version_check
         run: |
-          git diff --quiet HEAD~1 HEAD -- CHANGELOG.md || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet CHANGELOG.md || echo "changed=true" >> $GITHUB_OUTPUT
       - name: Generate a tag from the latest CHANGELOG.md version
         if: steps.new_version_check.outputs.changed == 'true'
         id: gen-tag
@@ -36,7 +36,16 @@ jobs:
         id: changelog-latest
         run: |
           echo change=$(cat CHANGELOG.md | awk -v n=1 '/##.*/{l++} l>n{exit} l==n') >> $GITHUB_OUTPUT
-      - name: Push tags to repo
+      - name: Check for major version tag
+        id: tag-check
+        run: |
+          TAG=${{steps.gen-tag.outputs.short_tag}}
+          if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Push tag to repo
         if: steps.gen-tag.outcome == 'success'
         uses: actions/github-script@v5
         with:
@@ -47,31 +56,24 @@ jobs:
               ref: 'refs/tags/${{steps.gen-tag.outputs.tag}}',
               sha: context.sha
             })
-
-            try {
-              github.rest.git.getRef({
+      - name: Push major version tag to repo
+        uses: actions/github-script@v5
+        with:
+          script: |
+            if (${{ steps.tag-check.tag_exists == true }}) {
+              github.rest.git.deleteRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}',
+                ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}'
               })
-            } catch (error) {
-              if (error.status === 404) {
-                github.rest.git.createRef({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}',
-                  sha: context.sha
-                })
-              } else {
-                github.rest.git.updateRef({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}',
-                  sha: context.sha,
-                  force: true
-                })
-              }
             }
+
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}',
+              sha: context.sha
+            })
       - name: Release
         uses: softprops/action-gh-release@v2
         id: release

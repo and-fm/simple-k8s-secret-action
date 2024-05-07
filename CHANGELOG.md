@@ -1,3 +1,7 @@
+## 0.1.3
+
+- Fix auto tagger
+
 ## 0.1.2
 
 - Improve auto tagging by filtering the release changelog
