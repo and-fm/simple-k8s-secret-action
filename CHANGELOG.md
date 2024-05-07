@@ -1,3 +1,7 @@
+## 0.1.8
+
+- fix multi line changelog issue
+
 ## 0.1.7
 
 - test multi line
