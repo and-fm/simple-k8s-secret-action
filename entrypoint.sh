@@ -4,6 +4,9 @@
 
 echo "$3" >> secrets.txt
 
+echo "$1"
+echo "$2"
+
 echo 'secret_yaml<<EOF' >> $GITHUB_OUTPUT
 secretparse $1 $2 >> $GITHUB_OUTPUT
 echo "EOF" >> $GITHUB_OUTPUT
