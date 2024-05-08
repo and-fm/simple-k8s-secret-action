@@ -2,7 +2,7 @@
 
 # run some kubectl commands
 
-echo $3 >> secrets.txt
+echo "$3" >> secrets.txt
 echo "line break\n"
 cat secrets.txt
 
