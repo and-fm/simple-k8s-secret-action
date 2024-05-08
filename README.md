@@ -16,9 +16,9 @@ The following inputs can be used as `step.with` keys:
 
 The following outputs can be accessed with steps.\<step-id\>.outputs.secret_yaml :
 
-| Name           | Type     | Default | Required | Description                   |
-| -------------- | -------- | ------- | -------- | ----------------------------- |
-| `secrets_yaml` | K8s Yaml |         | `true`   | The resulting k8s secret yaml |
+| Name          | Type     | Default | Required | Description                   |
+| ------------- | -------- | ------- | -------- | ----------------------------- |
+| `secret_yaml` | K8s Yaml |         | `true`   | The resulting k8s secret yaml |
 
 ## Workflows
 
