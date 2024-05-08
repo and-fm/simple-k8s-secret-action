@@ -3,10 +3,8 @@
 # run some kubectl commands
 
 echo "$3" >> secrets.txt
-echo "line break\n"
-echo $(cat secrets.txt)
 
-secretparse $1 $2 >> $GITHUB_OUTPUT
+echo "secret=$(secretparse $1 $2)" >> $GITHUB_OUTPUT
 
 # kubectl create secret generic gocamp-secrets --dry-run=client \
 #             --from-literal=JWT_SECRET=random_secret \
