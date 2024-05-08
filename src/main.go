@@ -33,11 +33,11 @@ func main() {
 
 	for fileScanner.Scan() {
 		text := fileScanner.Text()
-		parts := strings.Split(text, ":")
-		if len(parts) < 2 {
+		secretName, secretValue, found := strings.Cut(text, ":")
+		if !found {
 			continue
 		}
-		createSecretCmd.Args = append(createSecretCmd.Args, fmt.Sprintf("--from-literal=%s=%s", parts[0], parts[1]));
+		createSecretCmd.Args = append(createSecretCmd.Args, fmt.Sprintf("--from-literal=%s=%s", secretName, secretValue));
 	}
 
 	finalArgs := []string{"-n", secretNamespace, "-o", "yaml"}

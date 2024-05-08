@@ -1,3 +1,7 @@
+## 0.2.1
+
+- Use cut instead of split
+
 ## 0.2.0
 
 - First actually working version
