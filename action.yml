@@ -17,4 +17,6 @@ runs:
   using: "docker"
   image: "Dockerfile"
   args:
+    - ${{ inputs.secrets_name }}
+    - ${{ inputs.secrets_namespace }}
     - ${{ inputs.secrets }}
