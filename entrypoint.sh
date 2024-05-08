@@ -2,7 +2,8 @@
 
 # run some kubectl commands
 
-echo $3 >> secrets.txt
+echo "$3" >> secrets.txt
+cat secrets.txt
 
 secretparse $1 $2 >> $GITHUB_OUTPUT
 
