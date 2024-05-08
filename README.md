@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate secret via kubectl
-        uses: and-fm/simple-k8s-secret-action@v0.2.0
+        uses: and-fm/simple-k8s-secret-action@main
         id: gen
         with:
           secrets_name: test_secrets
