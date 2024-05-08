@@ -6,9 +6,19 @@ A simple and extendable action that can take in any number of secrets, and gener
 
 The following inputs can be used as `step.with` keys:
 
-| Name      | Type | Default | Required | Description                           |
-| --------- | ---- | ------- | -------- | ------------------------------------- |
-| `secrets` | List |         | `true`   | The actual list of secrets to pass in |
+| Name                | Type   | Default | Required | Description                             |
+| ------------------- | ------ | ------- | -------- | --------------------------------------- |
+| `secrets_name`      | String |         | `true`   | The name of the secret                  |
+| `secrets_namespace` | List   |         | `true`   | The k8s namespace the secret will be in |
+| `secrets`           | List   |         | `true`   | The actual list of secrets to pass in   |
+
+## Outputs
+
+The following outputs can be accessed with steps.\<step-id\>.outputs.secret_yaml :
+
+| Name           | Type     | Default | Required | Description                   |
+| -------------- | -------- | ------- | -------- | ----------------------------- |
+| `secrets_yaml` | K8s Yaml |         | `true`   | The resulting k8s secret yaml |
 
 ## Workflows
 
@@ -40,8 +50,14 @@ jobs:
     steps:
       - name: Generate secret via kubectl
         uses: and-fm/simple-k8s-secret-action@v0.1.0
+        id: gen
         with:
+          secrets_name: test_secrets
+          secrets_namespace: grid-dev
           secrets: |-
             SECRET_1:${{ secrets.SECRET_1 }}
             SECRET_2:${{ secrets.SECRET_2 }}
+      - name: get secrets
+        run: |
+          echo "${{ steps.gen.outputs.secret_yaml}}"
 ```
