@@ -4,6 +4,12 @@ branding:
   color: "blue"
 description: "Generates a valid k8s secret yaml from a list of secrets"
 inputs:
+  secrets_name:
+    description: Resource name
+    required: true
+  secrets_namespace:
+    description: Namespace to put the secrets in
+    required: true
   secrets:
     description: list of secrets
     required: true
@@ -11,4 +17,6 @@ runs:
   using: "docker"
   image: "Dockerfile"
   args:
+    - ${{ inputs.secrets_name }}
+    - ${{ inputs.secrets_namespace }}
     - ${{ inputs.secrets }}

@@ -1,3 +1,7 @@
+## 0.2.0
+
+- First actually working version
+
 ## 0.1.8
 
 - fix multi line changelog issue
