@@ -14,8 +14,8 @@ FROM alpine:latest
 RUN apk update
 RUN apk add kubectl
 
-COPY --from=build /usr/local/bin/secretparse ./secretparse
-RUN chmod +x /secretparse
+COPY --from=build /usr/local/bin/secretparse /bin/secretparse
+RUN chmod +x /bin/secretparse
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
