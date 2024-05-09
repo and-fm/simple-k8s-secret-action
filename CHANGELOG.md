@@ -1,3 +1,7 @@
+## 0.3.0
+
+- Switch to pure bash implementation
+
 ## 0.2.7
 
 - Test a random version bump
