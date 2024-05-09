@@ -65,6 +65,8 @@ jobs:
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
+
+          echo tag_exists=true >> $GITHUB_OUTPUT
       - name: Check for major tag
         id: major-tag-check
         run: |
