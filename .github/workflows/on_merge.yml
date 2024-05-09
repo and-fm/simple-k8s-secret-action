@@ -20,7 +20,7 @@ env:
 jobs:
   if_merged:
     name: Release and tag
-    if: github.event.pull_request.merged == true
+    if: ${{ github.event.pull_request.merged == true || env.MANUAL_RELEASE }}
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
