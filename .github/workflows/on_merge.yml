@@ -43,7 +43,7 @@ jobs:
           else
             if ${{ env.MANUAL_RELEASE }}
             then
-              echo tag=v${{ inputs.version }}
+              echo tag=v${{ inputs.version }} >> $GITHUB_OUTPUT
               echo short_tag=$(echo $tag | sed "s/\..*//g") >> $GITHUB_OUTPUT
             fi
           fi
