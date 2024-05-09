@@ -2,10 +2,10 @@
 
 # echo "$SECRETS" >> secrets.txt
 
-echo "$1" >> $GITHUB_OUTPUT
-echo "$2" >> $GITHUB_OUTPUT
-echo "$3" >> $GITHUB_OUTPUT
-echo "$4" >> $GITHUB_OUTPUT
+echo "secret=$1" >> $GITHUB_OUTPUT
+echo "secret_ns=$2" >> $GITHUB_OUTPUT
+echo "secret1=$3" >> $GITHUB_OUTPUT
+echo "secret2=$4" >> $GITHUB_OUTPUT
 
 echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
 
