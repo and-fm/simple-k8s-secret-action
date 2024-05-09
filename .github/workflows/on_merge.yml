@@ -47,16 +47,6 @@ jobs:
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
-      - name: Release secretparse linux/amd64
-        uses: wangyoucao577/go-release-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: linux
-          goarch: amd64
-          project_path: src
-          binary_name: secretparse
-          ldflags: -w -s
-          release_tag: ${{steps.gen-tag.outputs.short_tag}}
       - name: Push tag to repo
         if: steps.gen-tag.outcome == 'success'
         uses: actions/github-script@v5
@@ -69,7 +59,7 @@ jobs:
               sha: context.sha
             })
       - name: Push major version tag to repo
-        if: ${{ (steps.gen-tag.outcome == 'success') && (steps.gen-tag.outputs.short_tag != 'v0') }}
+        if: ${{ (steps.gen-tag.outcome == 'success') }}
         uses: actions/github-script@v5
         with:
           script: |
@@ -87,6 +77,17 @@ jobs:
               ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}',
               sha: context.sha
             })
+      - name: Release secretparse linux/amd64
+        if: ${{ (steps.gen-tag.outcome == 'success') }}
+        uses: wangyoucao577/go-release-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: linux
+          goarch: amd64
+          project_path: src
+          binary_name: secretparse
+          ldflags: -w -s
+          release_tag: ${{steps.gen-tag.outputs.short_tag}}
       - name: Release
         uses: softprops/action-gh-release@v2
         id: release
