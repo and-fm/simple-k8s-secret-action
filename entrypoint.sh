@@ -2,7 +2,7 @@
 
 # echo "$SECRETS" >> secrets.txt
 
-echo "./kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
+echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
 
 # while IFS="" read -r s || [ -n "$s" ]
 # do

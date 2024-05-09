@@ -11,8 +11,8 @@
 
 FROM alpine/curl:latest
 
-RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-RUN chmod +x kubectl
+RUN curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /bin/kubectl
+RUN chmod +x /bin/kubectl
 
 # COPY --from=build /usr/local/bin/secretparse /bin/secretparse
 # RUN chmod +x /bin/secretparse
