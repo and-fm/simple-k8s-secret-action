@@ -75,16 +75,16 @@ jobs:
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
-      - name: Delete previous tag if exists
-        # if: steps.tag-check.outputs.tag_exists == true
-        uses: actions/github-script@v5
-        with:
-          script: |
-            github.rest.git.deleteRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{steps.gen-tag.outputs.tag}}'
-            })
+      # - name: Delete previous tag if exists
+      #   # if: steps.tag-check.outputs.tag_exists == true
+      #   uses: actions/github-script@v5
+      #   with:
+      #     script: |
+      #       github.rest.git.deleteRef({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         ref: 'refs/tags/${{steps.gen-tag.outputs.tag}}'
+      #       })
       - name: Delete previous major version tag if exists
         # if: steps.major-tag-check.outputs.major_tag_exists == true
         uses: actions/github-script@v5
@@ -95,17 +95,17 @@ jobs:
               repo: context.repo.repo,
               ref: 'refs/tags/${{steps.gen-tag.outputs.major_tag}}'
             })
-      - name: Push tag to repo
-        if: steps.gen-tag.outcome == 'success'
-        uses: actions/github-script@v5
-        with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{steps.gen-tag.outputs.tag}}',
-              sha: context.sha
-            })
+      # - name: Push tag to repo
+      #   if: steps.gen-tag.outcome == 'success'
+      #   uses: actions/github-script@v5
+      #   with:
+      #     script: |
+      #       github.rest.git.createRef({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         ref: 'refs/tags/${{steps.gen-tag.outputs.tag}}',
+      #         sha: context.sha
+      #       })
 
       - name: Push major version tag to repo
         if: ${{ (steps.gen-tag.outcome == 'success') }}
