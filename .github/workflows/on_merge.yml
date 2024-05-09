@@ -55,21 +55,25 @@ jobs:
         if: env.MANUAL_RELEASE
         run: |
           cat CHANGELOG.md | awk '/## ${{ inputs.version }}/{l++} l==1' | awk '/##.*/{l++} l>1{exit} l==1' >> change.txt
-      - name: Check for tags
+      - name: Check for tag
         id: tag-check
         run: |
           TAG=${{steps.gen-tag.outputs.tag}}
-          MAJOR_TAG=${{steps.gen-tag.outputs.major_tag}}
+
           if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
             echo "tag_exists=true" >> $GITHUB_OUTPUT
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
+      - name: Check for major tag
+        id: major-tag-check
+        run: |
+          MAJOR_TAG=${{steps.gen-tag.outputs.major_tag}}
 
           if git show-ref --tags --verify --quiet "refs/tags/${MAJOR_TAG}"; then
-            echo "major_tag_exists=true" >> $GITHUB_OUTPUT
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
           else
-            echo "major_tag_exists=false" >> $GITHUB_OUTPUT
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
       - name: Delete previous tag if exists
         if: ${{ steps.tag-check.outputs.tag_exists == true }}
@@ -82,7 +86,7 @@ jobs:
               ref: 'refs/tags/${{steps.gen-tag.outputs.tag}}'
             })
       - name: Delete previous major version tag if exists
-        if: ${{ steps.tag-check.outputs.major_tag_exists == true }}
+        if: ${{ steps.major-tag-check.outputs.major_tag_exists == true }}
         uses: actions/github-script@v5
         with:
           script: |
