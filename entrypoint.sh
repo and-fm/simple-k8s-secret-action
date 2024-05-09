@@ -6,9 +6,9 @@ echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
 
 while IFS="" read -r s || [ -n "$s" ]
 do
-  name=$(cut -d ':' -f 1 <<< $s)
-  value=$(cut -d ':' -f 2- <<< $s)
-  echo "--from-literal=$name=$value \\" >> kubecmd.sh
+    name=$(echo $s | cut -d ':' -f 1)
+    value=$(echo $s | cut -d ':' -f 2-)
+    echo "--from-literal=$name=$value \\" >> kubecmd.sh
 done < secrets.txt
 
 # for s in "${@:3}"
