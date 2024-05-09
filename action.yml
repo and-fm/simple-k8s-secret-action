@@ -13,6 +13,12 @@ inputs:
   secrets:
     description: list of secrets
     required: true
+  basic_auth:
+    description: Username and password to create a basic auth secret
+    required: false
+  configmap_env:
+    description: Env vars list in the same format as passing secrets but generates configmap
+    required: false
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -20,3 +26,5 @@ runs:
     - ${{ inputs.secrets_name }}
     - ${{ inputs.secrets_namespace }}
     - ${{ inputs.secrets }}
+    - ${{ inputs.basic_auth }}
+    - ${{ inputs.configmap_env }}
