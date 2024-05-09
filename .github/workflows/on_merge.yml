@@ -14,7 +14,7 @@ on:
     tags: none
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: cloudflared-ssh-action
+  IMAGE_NAME: ${{ github.repository }}
   MANUAL_RELEASE: ${{ github.event_name == 'workflow_dispatch' }}
 
 jobs:
@@ -40,8 +40,9 @@ jobs:
             echo tag=$(cat tag.txt) >> $GITHUB_OUTPUT
             echo major_tag=$(cat tag.txt | sed "s/\..*//g") >> $GITHUB_OUTPUT
           elif ${{ env.MANUAL_RELEASE }}; then
-            echo tag=v${{ inputs.version }} >> $GITHUB_OUTPUT
-            echo major_tag=$(echo $tag | sed "s/\..*//g") >> $GITHUB_OUTPUT
+            echo ${{ inputs.version }} >> tag.txt
+            echo tag=v$(cat tag.txt) >> $GITHUB_OUTPUT
+            echo major_tag=v$(cat tag.txt | sed "s/\..*//g") >> $GITHUB_OUTPUT
           else
             echo "cannot get tag"
             exit 1
@@ -54,7 +55,7 @@ jobs:
         if: env.MANUAL_RELEASE
         run: |
           cat CHANGELOG.md | awk '/## ${{ inputs.version }}/{l++} l==1' | awk '/##.*/{l++} l>1{exit} l==1' >> change.txt
-      - name: Check for major version tag
+      - name: Check for tags
         id: tag-check
         run: |
           TAG=${{steps.gen-tag.outputs.tag}}
