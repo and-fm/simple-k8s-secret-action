@@ -1,3 +1,7 @@
+## 0.2.2
+
+- Release the go binary
+
 ## 0.2.1
 
 - Use cut instead of split
