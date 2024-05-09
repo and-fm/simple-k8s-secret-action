@@ -1,4 +1,4 @@
-name: Automatically tag and release on merge
+name: Automatically tag and release
 
 on:
   pull_request:
@@ -6,10 +6,16 @@ on:
       - closed
     branches:
       - "main"
-
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release (do not include v)
+        required: true
+    tags: none
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: cloudflared-ssh-action
+  MANUAL_RELEASE: ${{ github.event_name == 'workflow_dispatch' }}
 
 jobs:
   if_merged:
@@ -29,14 +35,26 @@ jobs:
         if: steps.new_version_check.outputs.changed == 'true'
         id: gen-tag
         run: |
-          cat CHANGELOG.md | grep -E -m 1 '^##\s(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$' | cut -c 4- | sed "s/^/v/" >> tag.txt
-          echo tag=$(cat tag.txt) >> $GITHUB_OUTPUT
-          echo short_tag=$(cat tag.txt | sed "s/\..*//g") >> $GITHUB_OUTPUT
+          if ${{ steps.new_version_check.outputs.changed == 'true' }}
+          then
+            cat CHANGELOG.md | grep -E -m 1 '^##\s(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$' | cut -c 4- | sed "s/^/v/" >> tag.txt
+            echo tag=$(cat tag.txt) >> $GITHUB_OUTPUT
+            echo short_tag=$(cat tag.txt | sed "s/\..*//g") >> $GITHUB_OUTPUT
+          else
+            if ${{ env.MANUAL_RELEASE }}
+            then
+              echo tag=v${{ inputs.version }}
+              echo short_tag=$(echo $tag | sed "s/\..*//g") >> $GITHUB_OUTPUT
+            fi
+          fi
       - name: Get latest changelog change
         if: steps.new_version_check.outputs.changed == 'true'
-        id: changelog-latest
         run: |
-          cat CHANGELOG.md | awk -v n=1 '/##.*/{l++} l>n{exit} l==n' >> change.txt
+          cat CHANGELOG.md | awk -v n=1 '/##.*/{l++} l>n{exit} l==n'
+      - name: Get passed changelog version
+        if: env.MANUAL_RELEASE
+        run: |
+          cat CHANGELOG.md | awk '/## ${{ inputs.version }}/{l++} l==1' | awk '/##.*/{l++} l>1{exit} l==1' >> change.txt
       - name: Check for major version tag
         id: tag-check
         run: |
@@ -79,11 +97,30 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         id: release
-        if: ${{ (steps.gen-tag.outputs.tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
+        if: ${{ (env.MANUAL_RELEASE) || (steps.gen-tag.outputs.tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
         with:
           tag_name: ${{steps.gen-tag.outputs.tag}}
           body_path: change.txt
           make_latest: true
+      - name: Release Major Version
+        uses: softprops/action-gh-release@v2
+        id: release-major
+        if: ${{ (env.MANUAL_RELEASE) || (steps.gen-tag.outputs.short_tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
+        with:
+          tag_name: ${{steps.gen-tag.outputs.short_tag}}
+          body_path: change.txt
+          make_latest: true
+      - name: Release secretparse linux/amd64
+        if: ${{ (env.MANUAL_RELEASE) || (steps.gen-tag.outcome == 'success') }}
+        uses: wangyoucao577/go-release-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: linux
+          goarch: amd64
+          project_path: src
+          binary_name: secretparse
+          ldflags: -w -s
+          release_tag: ${{steps.gen-tag.outputs.short_tag}}
       - name: Login to GitHub Packages
         if: steps.release.outcome == 'success'
         uses: docker/login-action@v3
