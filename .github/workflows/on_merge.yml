@@ -65,8 +65,6 @@ jobs:
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
-
-          echo tag_exists=true >> $GITHUB_OUTPUT
       - name: Check for major tag
         id: major-tag-check
         run: |
@@ -77,6 +75,10 @@ jobs:
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
+      - name: what the
+        run: |
+          echo ${{ steps.tag-check.outputs.tag_exists }}
+          echo ${{ steps.major-tag-check.outputs.tag_exists }}
       - name: Delete previous tag if exists
         if: ${{ steps.tag-check.outputs.tag_exists == true }}
         uses: actions/github-script@v5
