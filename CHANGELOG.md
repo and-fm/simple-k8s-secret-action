@@ -1,3 +1,7 @@
+## 0.3.1
+
+- Only tag major version, don't release
+
 ## 0.3.0
 
 - Switch to pure bash implementation
