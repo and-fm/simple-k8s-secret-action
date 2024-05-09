@@ -1,3 +1,23 @@
+## 0.2.6
+
+- Fix delete major tag logic
+
+## 0.2.5
+
+- Fix release 2: electric boogaloo
+
+## 0.2.4
+
+- Fix release
+
+## 0.2.3
+
+- Generate v0 tag
+
+## 0.2.2
+
+- Release the go binary
+
 ## 0.2.1
 
 - Use cut instead of split
