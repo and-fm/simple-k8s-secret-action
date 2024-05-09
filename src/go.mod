@@ -1,3 +1,2 @@
-module and.fm/simple-k8s-secret-action
-
+module and.fm/k8s-secretparse
 go 1.22.1
