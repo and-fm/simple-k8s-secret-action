@@ -1,3 +1,7 @@
+## 0.2.5
+
+- Fix release 2: electric boogaloo
+
 ## 0.2.4
 
 - Fix release
