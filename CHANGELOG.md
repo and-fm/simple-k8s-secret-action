@@ -1,3 +1,7 @@
+## 0.2.3
+
+- Generate v0 tag
+
 ## 0.2.2
 
 - Release the go binary
