@@ -83,7 +83,7 @@ jobs:
             github.rest.git.deleteRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: '${{steps.gen-tag.outputs.tag}}'
+              ref: 'tags/${{steps.gen-tag.outputs.tag}}'
             })
       - name: Delete previous major version tag if exists
         # if: steps.major-tag-check.outputs.major_tag_exists == true
@@ -93,7 +93,7 @@ jobs:
             github.rest.git.deleteRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: '{{steps.gen-tag.outputs.major_tag}}'
+              ref: 'tags/{{steps.gen-tag.outputs.major_tag}}'
             })
       - name: Push tag to repo
         if: steps.gen-tag.outcome == 'success'
