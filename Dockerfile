@@ -1,21 +1,20 @@
-FROM golang:latest as build
+# FROM golang:latest as build
 
-WORKDIR /app
+# WORKDIR /app
 
-COPY src/go.mod ./
-ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+# COPY src/go.mod ./
+# ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
-COPY src .
+# COPY src .
 
-RUN go build -ldflags "-w -s" -v -o /usr/local/bin/secretparse .
+# RUN go build -ldflags "-w -s" -v -o /usr/local/bin/secretparse .
 
 FROM alpine:latest
 
-RUN apk update
-RUN apk add kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 
-COPY --from=build /usr/local/bin/secretparse /bin/secretparse
-RUN chmod +x /bin/secretparse
+# COPY --from=build /usr/local/bin/secretparse /bin/secretparse
+# RUN chmod +x /bin/secretparse
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
