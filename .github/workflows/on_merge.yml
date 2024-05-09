@@ -87,7 +87,7 @@ jobs:
           make_latest: true
       - name: Release Major Version
         uses: softprops/action-gh-release@v2
-        id: release
+        id: release-major
         if: ${{ (steps.gen-tag.outputs.short_tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
         with:
           tag_name: ${{steps.gen-tag.outputs.short_tag}}
