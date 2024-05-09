@@ -38,10 +38,10 @@ jobs:
           if ${{ steps.new_version_check.outputs.changed == 'true' }}; then
             cat CHANGELOG.md | grep -E -m 1 '^##\s(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$' | cut -c 4- | sed "s/^/v/" >> tag.txt
             echo tag=$(cat tag.txt) >> $GITHUB_OUTPUT
-            echo short_tag=$(cat tag.txt | sed "s/\..*//g") >> $GITHUB_OUTPUT
+            echo major_tag=$(cat tag.txt | sed "s/\..*//g") >> $GITHUB_OUTPUT
           elif ${{ env.MANUAL_RELEASE }}; then
             echo tag=v${{ inputs.version }} >> $GITHUB_OUTPUT
-            echo short_tag=$(echo $tag | sed "s/\..*//g") >> $GITHUB_OUTPUT
+            echo major_tag=$(echo $tag | sed "s/\..*//g") >> $GITHUB_OUTPUT
           else
             echo "cannot get tag"
             exit 1
@@ -57,12 +57,39 @@ jobs:
       - name: Check for major version tag
         id: tag-check
         run: |
-          TAG=${{steps.gen-tag.outputs.short_tag}}
+          TAG=${{steps.gen-tag.outputs.tag}}
+          MAJOR_TAG=${{steps.gen-tag.outputs.major_tag}}
           if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
             echo "tag_exists=true" >> $GITHUB_OUTPUT
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
+
+          if git show-ref --tags --verify --quiet "refs/tags/${MAJOR_TAG}"; then
+            echo "major_tag_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "major_tag_exists=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Delete previous tag if exists
+        if: ${{ steps.tag-check.tag_exists == true }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.deleteRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{steps.gen-tag.outputs.tag}}'
+            })
+      - name: Delete previous major version tag if exists
+        if: ${{ steps.tag-check.major_tag_exists == true }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.deleteRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{steps.gen-tag.outputs.major_tag}}'
+            })
       - name: Push tag to repo
         if: steps.gen-tag.outcome == 'success'
         uses: actions/github-script@v5
@@ -74,16 +101,7 @@ jobs:
               ref: 'refs/tags/${{steps.gen-tag.outputs.tag}}',
               sha: context.sha
             })
-      - name: Delete previous major version tag if exists
-        if: ${{ steps.tag-check.tag_exists == true }}
-        uses: actions/github-script@v5
-        with:
-          script: |
-            github.rest.git.deleteRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}'
-            })
+
       - name: Push major version tag to repo
         if: ${{ (steps.gen-tag.outcome == 'success') }}
         uses: actions/github-script@v5
@@ -92,7 +110,7 @@ jobs:
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}',
+              ref: 'refs/tags/${{steps.gen-tag.outputs.major_tag}}',
               sha: context.sha
             })
       - name: Release
@@ -106,9 +124,9 @@ jobs:
       - name: Release Major Version
         uses: softprops/action-gh-release@v2
         id: release-major
-        if: ${{ (env.MANUAL_RELEASE) || (steps.gen-tag.outputs.short_tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
+        if: ${{ (env.MANUAL_RELEASE) || (steps.gen-tag.outputs.major_tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
         with:
-          tag_name: ${{steps.gen-tag.outputs.short_tag}}
+          tag_name: ${{steps.gen-tag.outputs.major_tag}}
           body_path: change.txt
           make_latest: true
       - name: Release secretparse linux/amd64
@@ -121,7 +139,7 @@ jobs:
           project_path: src
           binary_name: secretparse
           ldflags: -w -s
-          release_tag: ${{steps.gen-tag.outputs.short_tag}}
+          release_tag: ${{steps.gen-tag.outputs.major_tag}}
       - name: Login to GitHub Packages
         if: steps.release.outcome == 'success'
         uses: docker/login-action@v3
@@ -136,4 +154,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ github.repository }}:latest, ${{ env.REGISTRY }}/${{ github.repository }}:${{steps.gen-tag.outputs.tag}}, ${{ env.REGISTRY }}/${{ github.repository }}:${{steps.gen-tag.outputs.short_tag}}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:latest, ${{ env.REGISTRY }}/${{ github.repository }}:${{steps.gen-tag.outputs.tag}}, ${{ env.REGISTRY }}/${{ github.repository }}:${{steps.gen-tag.outputs.major_tag}}
