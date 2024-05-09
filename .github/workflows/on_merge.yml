@@ -76,6 +76,7 @@ jobs:
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
       - name: Delete previous tag if exists
+        if: ${{ steps.tag-check.outputs.tag_exists }}
         uses: octokit/request-action@v2.x
         with:
           route: DELETE /repos/{owner}/{repo}/git/refs/${{ steps.gen-tag.outputs.tag }}
@@ -84,6 +85,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete previous major tag if exists
+        if: ${{ steps.major-tag-check.outputs.tag_exists }}
         uses: octokit/request-action@v2.x
         with:
           route: DELETE /repos/{owner}/{repo}/git/refs/${{ steps.gen-tag.outputs.major_tag }}
