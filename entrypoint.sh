@@ -20,8 +20,8 @@ done < secrets.txt
 
 echo "-n $2 -o yaml" >> kubecmd.sh
 
-echo "$(cat kubecmd.sh)"
-
 chmod +x kubecmd.sh
 
-echo secret_yaml=$(./kubecmd.sh) >> $GITHUB_OUTPUT
+echo 'secret_yaml<<EOF' >> $GITHUB_OUTPUT
+./kubecmd.sh >> $GITHUB_OUTPUT
+echo "EOF" >> $GITHUB_OUTPUT
