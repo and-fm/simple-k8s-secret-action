@@ -33,7 +33,6 @@ jobs:
         run: |
           git diff --quiet HEAD~1 HEAD CHANGELOG.md || echo "changed=true" >> $GITHUB_OUTPUT
       - name: Generate a tag from the latest CHANGELOG.md version
-        if: steps.new_version_check.outputs.changed == 'true'
         id: gen-tag
         run: |
           if ${{ steps.new_version_check.outputs.changed == 'true' }}
