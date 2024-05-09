@@ -76,27 +76,21 @@ jobs:
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
       - name: Delete previous tag if exists
-        # if: steps.tag-check.outputs.tag_exists == true
-        uses: actions/github-script@v5
+        uses: octokit/request-action@v2.x
         with:
-          script: |
-            const tag = ${{steps.gen-tag.outputs.tag}}
-            github.rest.git.deleteRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${tag}`
-            })
-      - name: Delete previous major version tag if exists
-        # if: steps.major-tag-check.outputs.major_tag_exists == true
-        uses: actions/github-script@v5
+          route: DELETE /repos/{owner}/{repo}/git/refs/${{ steps.gen-tag.outputs.tag }}
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Delete previous major tag if exists
+        uses: octokit/request-action@v2.x
         with:
-          script: |
-            const tag = {{steps.gen-tag.outputs.major_tag}}
-            github.rest.git.deleteRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${tag}`
-            })
+          route: DELETE /repos/{owner}/{repo}/git/refs/${{ steps.gen-tag.outputs.major_tag }}
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Push tag to repo
         if: steps.gen-tag.outcome == 'success'
         uses: actions/github-script@v5
