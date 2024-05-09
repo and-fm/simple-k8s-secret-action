@@ -57,26 +57,16 @@ jobs:
           cat CHANGELOG.md | awk '/## ${{ inputs.version }}/{l++} l==1' | awk '/##.*/{l++} l>1{exit} l==1' >> change.txt
       - name: Check for tag
         id: tag-check
-        run: |
-          TAG=${{steps.gen-tag.outputs.tag}}
-
-          if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
-            echo "tag_exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "tag_exists=false" >> $GITHUB_OUTPUT
-          fi
+        uses: mukunku/tag-exists-action@v1.6.0
+        with:
+          tag: ${{steps.gen-tag.outputs.tag}}
       - name: Check for major tag
         id: major-tag-check
-        run: |
-          MAJOR_TAG=${{steps.gen-tag.outputs.major_tag}}
-
-          if git show-ref --tags --verify --quiet "refs/tags/${MAJOR_TAG}"; then
-            echo "tag_exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "tag_exists=false" >> $GITHUB_OUTPUT
-          fi
+        uses: mukunku/tag-exists-action@v1.6.0
+        with:
+          tag: ${{steps.gen-tag.outputs.major_tag}}
       - name: Delete previous tag if exists
-        if: ${{ steps.tag-check.outputs.tag_exists }}
+        if: ${{ steps.tag-check.outputs.exists == 'true' }}
         uses: octokit/request-action@v2.x
         with:
           route: DELETE /repos/{owner}/{repo}/git/refs/${{ steps.gen-tag.outputs.tag }}
@@ -85,7 +75,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete previous major tag if exists
-        if: ${{ steps.major-tag-check.outputs.tag_exists }}
+        if: ${{ steps.major-tag-check.outputs.exists == 'true' }}
         uses: octokit/request-action@v2.x
         with:
           route: DELETE /repos/{owner}/{repo}/git/refs/${{ steps.gen-tag.outputs.major_tag }}
