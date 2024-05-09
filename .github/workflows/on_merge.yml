@@ -110,14 +110,14 @@ jobs:
           tag_name: ${{steps.gen-tag.outputs.tag}}
           body_path: change.txt
           make_latest: true
-      - name: Release Major Version
-        uses: softprops/action-gh-release@v2
-        id: release-major
-        if: ${{ (env.MANUAL_RELEASE) || (steps.gen-tag.outputs.major_tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
-        with:
-          tag_name: ${{steps.gen-tag.outputs.major_tag}}
-          body_path: change.txt
-          make_latest: true
+      # - name: Release Major Version
+      #   uses: softprops/action-gh-release@v2
+      #   id: release-major
+      #   if: ${{ (env.MANUAL_RELEASE) || (steps.gen-tag.outputs.major_tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
+      #   with:
+      #     tag_name: ${{steps.gen-tag.outputs.major_tag}}
+      #     body_path: change.txt
+      #     make_latest: true
       # - name: Release secretparse linux/amd64
       #   if: ${{ (env.MANUAL_RELEASE) || (steps.gen-tag.outcome == 'success') }}
       #   uses: wangyoucao577/go-release-action@v1
