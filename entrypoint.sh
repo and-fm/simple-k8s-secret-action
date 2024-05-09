@@ -13,8 +13,8 @@ echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
 
 for s in "${@:3}"
 do
-    name=$(cut -d ':' -f 1 <<< $s)
-    value=$(cut -d ':' -f 2- <<< $s)
+    name=$(echo $s | cut -d ':' -f 1)
+    value=$(echo $s | cut -d ':' -f 2-)
     echo "--from-literal=$name=$value \\" >> kubecmd.sh
 done
 
