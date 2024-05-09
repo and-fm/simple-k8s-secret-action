@@ -32,20 +32,19 @@ jobs:
         id: new_version_check
         run: |
           git diff --quiet HEAD~1 HEAD CHANGELOG.md || echo "changed=true" >> $GITHUB_OUTPUT
-      - name: Generate a tag from the latest CHANGELOG.md version
+      - name: Generate the tag
         id: gen-tag
         run: |
-          if ${{ steps.new_version_check.outputs.changed == 'true' }}
-          then
+          if ${{ steps.new_version_check.outputs.changed == 'true' }}; then
             cat CHANGELOG.md | grep -E -m 1 '^##\s(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$' | cut -c 4- | sed "s/^/v/" >> tag.txt
             echo tag=$(cat tag.txt) >> $GITHUB_OUTPUT
             echo short_tag=$(cat tag.txt | sed "s/\..*//g") >> $GITHUB_OUTPUT
+          elif ${{ env.MANUAL_RELEASE }}; then
+            echo tag=v${{ inputs.version }} >> $GITHUB_OUTPUT
+            echo short_tag=$(echo $tag | sed "s/\..*//g") >> $GITHUB_OUTPUT
           else
-            if ${{ env.MANUAL_RELEASE }}
-            then
-              echo tag=v${{ inputs.version }} >> $GITHUB_OUTPUT
-              echo short_tag=$(echo $tag | sed "s/\..*//g") >> $GITHUB_OUTPUT
-            fi
+            echo "cannot get tag"
+            exit 1
           fi
       - name: Get latest changelog change
         if: steps.new_version_check.outputs.changed == 'true'
