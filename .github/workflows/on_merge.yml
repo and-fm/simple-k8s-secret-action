@@ -80,20 +80,22 @@ jobs:
         uses: actions/github-script@v5
         with:
           script: |
+            const tag = ${{steps.gen-tag.outputs.tag}}
             github.rest.git.deleteRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'tags/${{steps.gen-tag.outputs.tag}}'
+              ref: 'refs/tags/' + tag
             })
       - name: Delete previous major version tag if exists
         # if: steps.major-tag-check.outputs.major_tag_exists == true
         uses: actions/github-script@v5
         with:
           script: |
+            const tag = {{steps.gen-tag.outputs.major_tag}}
             github.rest.git.deleteRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'tags/{{steps.gen-tag.outputs.major_tag}}'
+              ref: 'refs/tags/' + tag
             })
       - name: Push tag to repo
         if: steps.gen-tag.outcome == 'success'
