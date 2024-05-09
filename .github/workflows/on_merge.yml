@@ -69,18 +69,14 @@ jobs:
         if: ${{ steps.tag-check.outputs.exists == 'true' }}
         uses: octokit/request-action@v2.x
         with:
-          route: DELETE /repos/{owner}/{repo}/git/refs/${{ steps.gen-tag.outputs.tag }}
-          owner: ${{ github.repository_owner }}
-          repo: ${{ github.event.repository.name }}
+          route: DELETE /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/git/refs/${{ steps.gen-tag.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete previous major tag if exists
         if: ${{ steps.major-tag-check.outputs.exists == 'true' }}
         uses: octokit/request-action@v2.x
         with:
-          route: DELETE /repos/{owner}/{repo}/git/refs/${{ steps.gen-tag.outputs.major_tag }}
-          owner: ${{ github.repository_owner }}
-          repo: ${{ github.event.repository.name }}
+          route: DELETE /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/git/refs/${{ steps.gen-tag.outputs.major_tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Push tag to repo
