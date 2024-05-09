@@ -75,12 +75,8 @@ jobs:
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
-      - name: what the
-        run: |
-          echo ${{ steps.tag-check.outputs.tag_exists }}
-          echo ${{ steps.major-tag-check.outputs.tag_exists }}
       - name: Delete previous tag if exists
-        if: ${{ steps.tag-check.outputs.tag_exists == true }}
+        if: steps.tag-check.outputs.tag_exists == true
         uses: actions/github-script@v5
         with:
           script: |
@@ -90,7 +86,7 @@ jobs:
               ref: 'refs/tags/${{steps.gen-tag.outputs.tag}}'
             })
       - name: Delete previous major version tag if exists
-        if: ${{ steps.major-tag-check.outputs.major_tag_exists == true }}
+        if: steps.major-tag-check.outputs.major_tag_exists == true
         uses: actions/github-script@v5
         with:
           script: |
