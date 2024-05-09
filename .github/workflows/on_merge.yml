@@ -77,6 +77,22 @@ jobs:
               ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}',
               sha: context.sha
             })
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        id: release
+        if: ${{ (steps.gen-tag.outputs.tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
+        with:
+          tag_name: ${{steps.gen-tag.outputs.tag}}
+          body_path: change.txt
+          make_latest: true
+      - name: Release Major Version
+        uses: softprops/action-gh-release@v2
+        id: release
+        if: ${{ (steps.gen-tag.outputs.short_tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
+        with:
+          tag_name: ${{steps.gen-tag.outputs.short_tag}}
+          body_path: change.txt
+          make_latest: true
       - name: Release secretparse linux/amd64
         if: ${{ (steps.gen-tag.outcome == 'success') }}
         uses: wangyoucao577/go-release-action@v1
@@ -88,14 +104,6 @@ jobs:
           binary_name: secretparse
           ldflags: -w -s
           release_tag: ${{steps.gen-tag.outputs.short_tag}}
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        id: release
-        if: ${{ (steps.gen-tag.outputs.tag != '') && (steps.new_version_check.outputs.changed == 'true') }}
-        with:
-          tag_name: ${{steps.gen-tag.outputs.tag}}
-          body_path: change.txt
-          make_latest: true
       - name: Login to GitHub Packages
         if: steps.release.outcome == 'success'
         uses: docker/login-action@v3

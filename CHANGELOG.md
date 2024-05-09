@@ -1,3 +1,7 @@
+## 0.2.4
+
+- Fix release
+
 ## 0.2.3
 
 - Generate v0 tag
