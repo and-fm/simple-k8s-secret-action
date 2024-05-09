@@ -1,3 +1,7 @@
+## 0.2.6
+
+- Fix delete major tag logic
+
 ## 0.2.5
 
 - Fix release 2: electric boogaloo
