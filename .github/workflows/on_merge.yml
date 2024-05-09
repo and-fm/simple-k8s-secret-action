@@ -58,19 +58,21 @@ jobs:
               ref: 'refs/tags/${{steps.gen-tag.outputs.tag}}',
               sha: context.sha
             })
+      - name: Delete previous major version tag if exists
+        if: ${{ steps.tag-check.tag_exists == true }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.deleteRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}'
+            })
       - name: Push major version tag to repo
         if: ${{ (steps.gen-tag.outcome == 'success') }}
         uses: actions/github-script@v5
         with:
           script: |
-            if (${{ steps.tag-check.tag_exists == true }}) {
-              github.rest.git.deleteRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: 'refs/tags/${{steps.gen-tag.outputs.short_tag}}'
-              })
-            }
-
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
