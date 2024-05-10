@@ -1,3 +1,8 @@
+## 0.4.0
+
+- You can now generate basic auth secrets!
+- And also generate configmaps
+
 ## 0.3.1
 
 - Only tag major version, don't release

@@ -1,22 +1,30 @@
-name: "Simple k8s Secret Action"
+name: "k8s YAML Action"
 branding:
   icon: "lock"
   color: "blue"
-description: "Generates a valid k8s secret yaml from a list of secrets"
+description: "Generates valid k8s yaml for secrets or configmaps"
 inputs:
-  secrets_name:
+  name:
     description: Resource name
     required: true
-  secrets_namespace:
-    description: Namespace to put the secrets in
+  namespace:
+    description: Namespace to put the resource in
     required: true
   secrets:
     description: list of secrets
-    required: true
+    required: false
+  basic_auth:
+    description: Username and password to create a basic auth secret
+    required: false
+  configmap_env:
+    description: Env vars list in the same format as passing secrets but generates configmap
+    required: false
 runs:
   using: "docker"
   image: "Dockerfile"
   args:
-    - ${{ inputs.secrets_name }}
-    - ${{ inputs.secrets_namespace }}
+    - ${{ inputs.name }}
+    - ${{ inputs.namespace }}
     - ${{ inputs.secrets }}
+    - ${{ inputs.basic_auth }}
+    - ${{ inputs.configmap_env }}
