@@ -1,8 +1,8 @@
-name: "Simple k8s Secret Action"
+name: "k8s YAML Action"
 branding:
   icon: "lock"
   color: "blue"
-description: "Generates a valid k8s secret yaml from a list of secrets"
+description: "Generates valid k8s yaml for secrets or configmaps"
 inputs:
   name:
     description: Resource name
