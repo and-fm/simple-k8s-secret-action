@@ -53,8 +53,8 @@ jobs:
         uses: and-fm/k8s-yaml-action@main
         id: gen
         with:
-          secrets_name: test_secrets
-          secrets_namespace: test-dev
+          name: test_secrets
+          namespace: test-dev
           secrets: |-
             SECRET_1:${{ secrets.SECRET_1 }}
             SECRET_2:${{ secrets.SECRET_2 }}
@@ -77,8 +77,8 @@ jobs:
         uses: and-fm/k8s-yaml-action@main
         id: gen
         with:
-          secrets_name: test_secrets
-          secrets_namespace: test-dev
+          name: test_secrets
+          namespace: test-dev
           basic_auth: admin:${{ secrets.ADMIN_PASSWORD }}
       - name: get secrets
         run: |
