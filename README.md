@@ -39,7 +39,7 @@ Remaining in the to-do is automating semantic version releases in case users nee
 ## Usage
 
 Here is an example deploy.yaml file to generate a generic secret from some secrets.  
-For generating a plain text insecure configmap, just pass your name value pairs into configmap_env instead of secrets
+For generating a plain text insecure configmap, just pass your name value pairs into `configmap_env` instead of `secrets`
 
 ```yaml
 name: Create a secret
