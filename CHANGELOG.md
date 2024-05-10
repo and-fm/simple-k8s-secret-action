@@ -1,3 +1,8 @@
+## 0.4.0
+
+- Introducing basic auth secrets!
+- Configmaps containing env vars coming soon
+
 ## 0.3.1
 
 - Only tag major version, don't release
