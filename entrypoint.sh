@@ -25,8 +25,8 @@ if [ -n $3 ]; then
 elif [ -n $4 ]; then
     username=$(echo $4 | cut -d ':' -f 1)
     password=$(echo $4 | cut -d ':' -f 2-)
-    echo "--from-literal=username=$username \\" >> kubecmd.sh
-    echo "--from-literal=password=$password \\" >> kubecmd.sh
+    echo "--from-literal=username="$username" \\" >> kubecmd.sh
+    echo "--from-literal=password="$password" \\" >> kubecmd.sh
 
     echo "--type kubernetes.io/basic-auth -n $2 -o yaml" >> kubecmd.sh
 
