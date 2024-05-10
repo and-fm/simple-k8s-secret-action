@@ -37,13 +37,13 @@ then
     echo 'secret_yaml<<EOF' >> $GITHUB_OUTPUT
     ./kubecmd.sh >> $GITHUB_OUTPUT
     echo "EOF" >> $GITHUB_OUTPUT
-    return 0
-fi
-
+    
 # if configmap env
 elif [ -n $5 ]
 then
     echo "todo"
+fi
+
 fi
 
 fi
