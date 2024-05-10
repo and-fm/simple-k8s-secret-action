@@ -1,6 +1,6 @@
 #!/bin/sh -l
 
-echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
+# echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
 
 # # if generic secret
 # if [ ! -z "$3" ]; then
@@ -33,22 +33,29 @@ echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
 #     echo "Please use one of secrets, basic_auth, or configmap_env"
 # fi
 
-echo "$3" >> data.txt
+# chmod +x kubecmd.sh
+
+# echo 'out_yaml<<EOF' >> $GITHUB_OUTPUT
+# ./kubecmd.sh >> $GITHUB_OUTPUT
+# echo "EOF" >> $GITHUB_OUTPUT
+
+#!/bin/sh -l
+
+echo "$3" >> secrets.txt
+
+echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
 
 while IFS="" read -r s || [ -n "$s" ]
 do
     name=$(echo $s | cut -d ':' -f 1)
     value=$(echo $s | cut -d ':' -f 2-)
     echo "--from-literal=$name=$value \\" >> kubecmd.sh
-done < data.txt
+done < secrets.txt
 
 echo "-n $2 -o yaml" >> kubecmd.sh
 
 chmod +x kubecmd.sh
 
-echo "testing"
-echo $(cat kubecmd.sh)
-
-echo "out_yaml<<EOF" >> $GITHUB_OUTPUT
+echo 'secret_yaml<<EOF' >> $GITHUB_OUTPUT
 ./kubecmd.sh >> $GITHUB_OUTPUT
 echo "EOF" >> $GITHUB_OUTPUT
