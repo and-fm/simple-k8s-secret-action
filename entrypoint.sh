@@ -1,20 +1,20 @@
 #!/bin/sh -l
 
-# echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
+echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
 
-# # if generic secret
-# if [ ! -z "$3" ]; then
-#     echo "$3" >> data.txt
+# if generic secret
+if [ ! -z "$3" ]; then
+    echo "$3" >> data.txt
 
-#     while IFS="" read -r s || [ -n "$s" ]
-#     do
-#         name=$(echo $s | cut -d ':' -f 1)
-#         value=$(echo $s | cut -d ':' -f 2-)
-#         echo "--from-literal=$name=$value \\" >> kubecmd.sh
-#     done < data.txt
+    while IFS="" read -r s || [ -n "$s" ]
+    do
+        name=$(echo $s | cut -d ':' -f 1)
+        value=$(echo $s | cut -d ':' -f 2-)
+        echo "--from-literal=$name=$value \\" >> kubecmd.sh
+    done < data.txt
 
-#     echo "-n $2 -o yaml" >> kubecmd.sh
-
+    echo "-n $2 -o yaml" >> kubecmd.sh
+fi
 # # if basic auth
 # elif [ ! -z "$4" ]; then
 #     username=$(echo $4 | cut -d ':' -f 1)
@@ -38,21 +38,6 @@
 # echo 'out_yaml<<EOF' >> $GITHUB_OUTPUT
 # ./kubecmd.sh >> $GITHUB_OUTPUT
 # echo "EOF" >> $GITHUB_OUTPUT
-
-#!/bin/sh -l
-
-echo "$3" >> data.txt
-
-echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
-
-while IFS="" read -r s || [ -n "$s" ]
-do
-    name=$(echo $s | cut -d ':' -f 1)
-    value=$(echo $s | cut -d ':' -f 2-)
-    echo "--from-literal=$name=$value \\" >> kubecmd.sh
-done < data.txt
-
-echo "-n $2 -o yaml" >> kubecmd.sh
 
 chmod +x kubecmd.sh
 
