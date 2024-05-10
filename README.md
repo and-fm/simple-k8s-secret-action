@@ -42,21 +42,19 @@ Here is an example deploy.yaml file to generate a generic secret from some secre
 For generating a plain text insecure configmap, just pass your name value pairs into configmap_env instead of secrets
 
 ```yaml
-name: Create a simple k8s secret
-on:
-  workflow_dispatch:
-    tags: none
+name: Create a secret
+on: workflow_dispatch
 jobs:
   create_secret:
     name: Create secret
     runs-on: ubuntu-latest
     steps:
       - name: Generate secret via kubectl
-        uses: and-fm/simple-k8s-secret-action@main
+        uses: and-fm/k8s-yaml-action@main
         id: gen
         with:
           secrets_name: test_secrets
-          secrets_namespace: grid-dev
+          secrets_namespace: test-dev
           secrets: |-
             SECRET_1:${{ secrets.SECRET_1 }}
             SECRET_2:${{ secrets.SECRET_2 }}
@@ -68,22 +66,20 @@ jobs:
 Here's an example for generating a basic auth secret:
 
 ```yaml
-name: Create a simple k8s secret
-on:
-  workflow_dispatch:
-    tags: none
+name: Create a basic auth secret
+on: workflow_dispatch
 jobs:
   create_secret:
     name: Create secret
     runs-on: ubuntu-latest
     steps:
       - name: Generate secret via kubectl
-        uses: and-fm/simple-k8s-secret-action@main
+        uses: and-fm/k8s-yaml-action@main
         id: gen
         with:
           secrets_name: test_secrets
-          secrets_namespace: grid-dev
-          basic_auth: admin:${{ secrets.ADMIN_PG_PASSWORD }}
+          secrets_namespace: test-dev
+          basic_auth: admin:${{ secrets.ADMIN_PASSWORD }}
       - name: get secrets
         run: |
           echo "${{ steps.gen.outputs.out_yaml}}"
