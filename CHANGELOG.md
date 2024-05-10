@@ -1,7 +1,7 @@
 ## 0.4.0
 
-- Introducing basic auth secrets!
-- Configmaps containing env vars coming soon
+- You can now generate basic auth secrets!
+- And also generate configmaps
 
 ## 0.3.1
 
