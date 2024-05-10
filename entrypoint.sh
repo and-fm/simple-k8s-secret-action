@@ -41,7 +41,7 @@
 
 #!/bin/sh -l
 
-echo "$3" >> secrets.txt
+echo "$3" >> data.txt
 
 echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
 
@@ -50,7 +50,7 @@ do
     name=$(echo $s | cut -d ':' -f 1)
     value=$(echo $s | cut -d ':' -f 2-)
     echo "--from-literal=$name=$value \\" >> kubecmd.sh
-done < secrets.txt
+done < data.txt
 
 echo "-n $2 -o yaml" >> kubecmd.sh
 
