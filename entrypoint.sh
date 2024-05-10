@@ -35,6 +35,9 @@ fi
 
 chmod +x kubecmd.sh
 
+echo "testing"
+echo $(cat kubecmd.sh)
+
 echo 'out_yaml<<EOF' >> $GITHUB_OUTPUT
 ./kubecmd.sh >> $GITHUB_OUTPUT
 echo "EOF" >> $GITHUB_OUTPUT
