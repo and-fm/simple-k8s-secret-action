@@ -1,9 +1,8 @@
 #!/bin/sh -l
 
-echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
-
 # if generic secret
 if [ ! -z "$3" ]; then
+    echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
     echo "$3" >> data.txt
 
     while IFS="" read -r s || [ -n "$s" ]
@@ -17,6 +16,8 @@ if [ ! -z "$3" ]; then
 
 # if basic auth
 elif [ ! -z "$4" ]; then
+    echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
+
     username=$(echo $4 | cut -d ':' -f 1)
     password=$(echo $4 | cut -d ':' -f 2-)
 
