@@ -8,9 +8,9 @@ if [ ! -z "$3" ]; then
 
     while IFS="" read -r s || [ -n "$s" ]
     do
-        name="$(echo $s | cut -d ':' -f 1)"
-        value="$(echo $s | cut -d ':' -f 2-)"
-        echo "--from-literal=$name=$value \\" >> kubecmd.sh
+        name=$(echo $s | cut -d ':' -f 1)
+        value=$(echo $s | cut -d ':' -f 2-)
+        echo "--from-literal=$name="$value" \\" >> kubecmd.sh
     done < data.txt
 
     echo "-n $2 -o yaml" >> kubecmd.sh
@@ -33,9 +33,9 @@ elif [ ! -z "$5" ]; then
 
     while IFS="" read -r s || [ -n "$s" ]
     do
-        name="$(echo $s | cut -d ':' -f 1)"
-        value="$(echo $s | cut -d ':' -f 2-)"
-        echo "--from-literal=$name=$value \\" >> kubecmd.sh
+        name=$(echo $s | cut -d ':' -f 1)
+        value=$(echo $s | cut -d ':' -f 2-)
+        echo "--from-literal=$name="$value" \\" >> kubecmd.sh
     done < data.txt
 
     echo "-n $2 -o yaml" >> kubecmd.sh
