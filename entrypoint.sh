@@ -27,7 +27,18 @@ elif [ ! -z "$4" ]; then
 
 # if configmap env
 elif [ ! -z "$5" ]; then
-    echo "todo"
+    echo "kubectl create configmap $1 --dry-run=client \\" > kubecmd.sh
+
+    echo "$5" >> data.txt
+
+    while IFS="" read -r s || [ -n "$s" ]
+    do
+        name=$(echo $s | cut -d ':' -f 1)
+        value=$(echo $s | cut -d ':' -f 2-)
+        echo "--from-literal=$name=$value \\" >> kubecmd.sh
+    done < data.txt
+
+    echo "-n $2 -o yaml" >> kubecmd.sh
 
 else
     echo "Please use one of secrets, basic_auth, or configmap_env"

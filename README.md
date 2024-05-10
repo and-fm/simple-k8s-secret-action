@@ -1,18 +1,18 @@
-# Simple k8s Secret Action
+# k8s YAML Action
 
-A simple and extendable action that can take in any number of secrets, and generate a valid k8s secret yaml as output to use in other actions.
+A simple and extendable action that can take in any number of secrets, basic auth, or plain text env vars, and generate a valid secret or configmap containing your input data.
 
 ## Inputs
 
 The following inputs can be used as `step.with` keys:
 
-| Name                | Type   | Default | Required | Description                                                                          |
-| ------------------- | ------ | ------- | -------- | ------------------------------------------------------------------------------------ |
-| `secrets_name`      | String |         | `true`   | The name of the secret                                                               |
-| `secrets_namespace` | List   |         | `true`   | The k8s namespace the secret will be in                                              |
-| `secrets`           | List   |         | `false`  | List of secrets to pass in                                                           |
-| `basic_auth`        | String |         | `false`  | A username and password to generate a basic auth secret. E.g. `bobby:iLikeTrains123` |
-| `configmap_env`     | List   |         | `false`  | List of vars to pass in (same format as secrets)                                     |
+| Name            | Type   | Default | Required | Description                                                                          |
+| --------------- | ------ | ------- | -------- | ------------------------------------------------------------------------------------ |
+| `name`          | String |         | `true`   | The name of the resource                                                             |
+| `namespace`     | List   |         | `true`   | The k8s namespace the resource will be in                                            |
+| `secrets`       | List   |         | `false`  | List of secrets to pass in to generate a secret                                      |
+| `basic_auth`    | String |         | `false`  | A username and password to generate a basic auth secret. E.g. `bobby:iLikeTrains123` |
+| `configmap_env` | List   |         | `false`  | List of vars to pass in to generate a configmap (same format as secrets)             |
 
 ## Outputs
 
