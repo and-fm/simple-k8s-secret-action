@@ -12,7 +12,7 @@ inputs:
     required: true
   secrets:
     description: list of secrets
-    required: true
+    required: false
   basic_auth:
     description: Username and password to create a basic auth secret
     required: false
