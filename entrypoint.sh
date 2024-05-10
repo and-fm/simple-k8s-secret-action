@@ -3,7 +3,7 @@
 echo "kubectl create secret generic $1 --dry-run=client \\" > kubecmd.sh
 
 # if generic secret
-if [ -n $3 ]; then
+if [ ! -z "$3" ]; then
     echo "section 1"
     echo "$3" >> secrets.txt
 
@@ -23,7 +23,7 @@ if [ -n $3 ]; then
     echo "EOF" >> $GITHUB_OUTPUT
 
 # if basic auth
-elif [ -n $4 ]; then
+elif [ ! -z "$4" ]; then
     echo "section 2"
     username=$(echo $4 | cut -d ':' -f 1)
     password=$(echo $4 | cut -d ':' -f 2-)
@@ -40,7 +40,7 @@ elif [ -n $4 ]; then
     echo "EOF" >> $GITHUB_OUTPUT
     
 # if configmap env
-elif [ -n $5 ]; then
+elif [ ! -z "$5" ]; then
     echo "todo"
 
 else
