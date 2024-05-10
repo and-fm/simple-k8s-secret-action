@@ -60,7 +60,7 @@ jobs:
             SECRET_2:${{ secrets.SECRET_2 }}
       - name: get secrets
         run: |
-          echo "${{ steps.gen.outputs.out_yaml}}"
+          echo "${{ steps.gen.outputs.out_yaml }}"
 ```
 
 Here's an example for generating a basic auth secret:
@@ -82,5 +82,5 @@ jobs:
           basic_auth: admin:${{ secrets.ADMIN_PASSWORD }}
       - name: get secrets
         run: |
-          echo "${{ steps.gen.outputs.out_yaml}}"
+          echo "${{ steps.gen.outputs.out_yaml }}"
 ```
